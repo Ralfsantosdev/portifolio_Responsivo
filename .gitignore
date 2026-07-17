@@ -1,0 +1,26 @@
+# Credenciais e variáveis de ambiente
+.env
+.env.*
+!.env.exemple
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Ambientes virtuais
+venv/
+env/
+.venv/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
