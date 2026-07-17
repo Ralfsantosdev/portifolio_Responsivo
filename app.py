@@ -2,10 +2,11 @@ from flask import Flask, render_template, redirect, request, flash
 from flask_mail import Mail, Message
 from dotenv import load_dotenv
 import os
+
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "dev-fallback-key")
+app.secret_key = os.getenv("SECRET_KEY")
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
@@ -33,26 +34,32 @@ def index():
 def send():
     if request.method == 'POST':
         formContato = Contato(
-            request.form["nome"],
-            request.form["email"],
-            request.form["mensagem"]
+            request.form.get("nome", ""),
+            request.form.get("email", ""),
+            request.form.get("mensagem", "")
         )
 
-        msg = Message(
-            subject = f'{formContato.nome} te enviou uma mensagem no portfólio',
-            sender = app.config.get("MAIL_USERNAME"),
-            recipients= ['ralfsantos7878go@gmail.com', app.config.get("MAIL_USERNAME")],
-            body = f'''
-            
+        try:
+            msg = Message(
+                subject=f'{formContato.nome} te enviou uma mensagem no portfólio',
+                sender=app.config.get("MAIL_USERNAME"),
+                recipients=[
+                    os.getenv("RECIPIENT_EMAIL"),
+                    app.config.get("MAIL_USERNAME")
+                ],
+                body=f'''
             {formContato.nome} com o e-mail {formContato.email}, te enviou a seguinte mensagem:
 
             {formContato.mensagem}
+                '''
+            )
+            mail.send(msg)
+            flash('Mensagem enviada com sucesso! ✅')
+        except Exception as e:
+            flash('Erro ao enviar mensagem. Tente novamente mais tarde. ❌')
+            print(f"[MAIL ERROR] {e}")
 
-            '''
-        )
-        mail.send(msg)
-        flash('Mensagem enviada com sucesso!')
     return redirect('/')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
