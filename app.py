@@ -5,7 +5,7 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'ralfsantosdev'
+app.secret_key = os.getenv("SECRET_KEY", "dev-fallback-key")
 
 mail_settings = {
     "MAIL_SERVER": 'smtp.gmail.com',
