@@ -56,12 +56,12 @@ def send():
                 '''
             )
             mail.send(msg)
-            if request.headers.get('Accept') == 'application/json':
+            if 'application/json' in request.headers.get('Accept', ''):
                 return jsonify({"success": True, "message": "Mensagem enviada com sucesso! ✅"}), 200
             flash('Mensagem enviada com sucesso! ✅')
         except Exception as e:
             print(f"[MAIL ERROR] {e}")
-            if request.headers.get('Accept') == 'application/json':
+            if 'application/json' in request.headers.get('Accept', ''):
                 return jsonify({"success": False, "message": "Erro ao enviar mensagem. Tente novamente mais tarde. ❌"}), 500
             flash('Erro ao enviar mensagem. Tente novamente mais tarde. ❌')
 
