@@ -1,11 +1,13 @@
-from flask import Flask, render_template, redirect, request, flash
+from flask import Flask, render_template, redirect, request, flash, jsonify
 from flask_mail import Mail, Message
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = os.getenv("SECRET_KEY")
 
 mail_settings = {
@@ -54,10 +56,14 @@ def send():
                 '''
             )
             mail.send(msg)
+            if request.headers.get('Accept') == 'application/json':
+                return jsonify({"success": True, "message": "Mensagem enviada com sucesso! ✅"}), 200
             flash('Mensagem enviada com sucesso! ✅')
         except Exception as e:
-            flash('Erro ao enviar mensagem. Tente novamente mais tarde. ❌')
             print(f"[MAIL ERROR] {e}")
+            if request.headers.get('Accept') == 'application/json':
+                return jsonify({"success": False, "message": "Erro ao enviar mensagem. Tente novamente mais tarde. ❌"}), 500
+            flash('Erro ao enviar mensagem. Tente novamente mais tarde. ❌')
 
     return redirect('/')
 

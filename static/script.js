@@ -45,18 +45,63 @@ window.addEventListener("scroll", ()=>{
   animeScroll();
 })
 
-// Ativar carregamento no botão de enviar formulário para
+// Envio de formulário com AJAX (fetch)
+const form = document.querySelector('form');
+const btnEnviar = document.querySelector('#btn-enviar');
+const btnEnviarLoader = document.querySelector('#btn-enviar-loader');
 
-const btnEnviar = document.querySelector('#btn-enviar')
-const btnEnviarLoader = document.querySelector('#btn-enviar-loader')
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Impede o recarregamento da página
 
-btnEnviar.addEventListener("click", ()=>{
-  btnEnviarLoader.style.display = "block";
-  btnEnviar.style.display = "none"
-})
+    btnEnviarLoader.style.display = "block";
+    btnEnviar.style.display = "none";
 
-// Tira a mensagem de sucesso depois de 5 segundos
+    const formData = new FormData(form);
+    const actionUrl = form.getAttribute('action') || '/send';
 
-setTimeout(() => {
-  document.querySelector('#alerta').style.display = 'none';
-}, 5000)
+    try {
+      const response = await fetch(actionUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json'
+        },
+        body: formData
+      });
+
+      const result = await response.json();
+      const alertBox = document.querySelector('#alerta');
+      const alertMsg = document.querySelector('#alerta-msg');
+
+      if (alertBox && alertMsg) {
+        alertBox.style.display = 'block';
+        if (response.ok) {
+          alertBox.className = 'alert alert-success alert-dismissible fade show';
+          alertMsg.innerHTML = `<i class="bi bi-check-circle-fill"></i> ${result.message || 'Mensagem enviada com sucesso!'}`;
+          form.reset(); // Limpa o formulário em caso de sucesso
+        } else {
+          alertBox.className = 'alert alert-danger alert-dismissible fade show';
+          alertMsg.innerHTML = `<i class="bi bi-x-circle-fill"></i> ${result.message || 'Erro ao enviar mensagem.'}`;
+        }
+      }
+    } catch (error) {
+      console.error("Erro no envio:", error);
+      const alertBox = document.querySelector('#alerta');
+      const alertMsg = document.querySelector('#alerta-msg');
+      if (alertBox && alertMsg) {
+        alertBox.style.display = 'block';
+        alertBox.className = 'alert alert-danger alert-dismissible fade show';
+        alertMsg.innerHTML = `<i class="bi bi-x-circle-fill"></i> Erro ao tentar se conectar ao servidor.`;
+      }
+    } finally {
+      btnEnviarLoader.style.display = "none";
+      btnEnviar.style.display = "block";
+
+      // Esconde o alerta depois de 5 segundos
+      setTimeout(() => {
+        const alertBox = document.querySelector('#alerta');
+        if(alertBox) alertBox.style.display = 'none';
+      }, 5000);
+    }
+  });
+}

@@ -449,16 +449,11 @@
         </section>
 
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        {% for message in messages %}
-        <div id="alerta" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill"></i> {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <!-- Alerta para mensagens de contato -->
+        <div id="alerta" class="alert alert-dismissible fade show" role="alert" style="display: none; position: fixed; top: 20px; right: 20px; z-index: 9999;">
+            <span id="alerta-msg"></span>
+            <button type="button" class="btn-close" onclick="document.getElementById('alerta').style.display='none'" aria-label="Close"></button>
         </div>
-        {% endfor %}
-        {% endif %}
-        {% endwith %}
     </main>
 
     <footer id="footer">

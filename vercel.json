@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/templates/index.html"
+    },
+    {
+      "source": "/send",
+      "destination": "https://SEU-APP-NO.onrender.com/send"
+    }
+  ]
+}
